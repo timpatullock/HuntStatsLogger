@@ -665,9 +665,14 @@ def getKillData(ts):
         "assists": assists
     }
 
+def GetHuntersByPartialName(name):
+    res = execute_query("select distinct profileid, blood_line_name, game_id, team_num from 'hunters' where blood_line_name like ? collate nocase", f"%{name}%")
 
-def SameTeamCount(name):
-    res = execute_query("select count(*) from 'hunters_view' join 'teams_view' on 'teams_view'.ownteam = 'true' and 'hunters_view'.team_num = 'teams_view'.team_num and 'hunters_view'.timestamp = 'teams_view'.timestamp where 'hunters_view'.blood_line_name = ?" , name)
+    log(res)
+    return res
+
+def SameTeamCount(pid):
+    res = execute_query("select count(*) from 'hunters_view' join 'teams_view' on 'teams_view'.ownteam = 'true' and 'hunters_view'.team_num = 'teams_view'.team_num and 'hunters_view'.timestamp = 'teams_view'.timestamp where 'hunters_view'.profileid = ?" , pid)
     res = 0 if len(res) == 0 else res[0][0]
     return res
 

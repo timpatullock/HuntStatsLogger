@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QGroupBox, QScrollArea, QLineEdit, QPushButton
 from PyQt6.QtCore import Qt
-from resources import settings, star_path, mmr_to_stars
-from DbHandler import GetTopNHunters, GetHunterKills, GetHunterByName, execute_query, getAllUsernames
+from resources import settings
+from DbHandler import GetHunterKills, GetHuntersByPartialName, execute_query, getAllUsernames
 from Widgets.Modal import Modal
 from Widgets.Label import Label
 
@@ -26,8 +26,8 @@ class HunterSearch(QGroupBox):
         name = self.searchBar.text()
         if len(name) <= 0:
             return
-        res = GetHunterByName(name)
-        self.ShowResults(res, name)
+        data = GetHuntersByPartialName(name)
+        self.ShowResults(data, name)
 
     def ShowResults(self, data, name):
         resultsWindow = Modal(parent=self)
@@ -69,6 +69,7 @@ class HunterSearch(QGroupBox):
             teamnums[d['game_id']] = d['team_num']
         teams = []
         for id in teamnums:
+
             pids = execute_query(
                 "select profileid from 'hunters' where game_id is '%s' and team_num is %d" % (id, teamnums[id]))
             team = []
